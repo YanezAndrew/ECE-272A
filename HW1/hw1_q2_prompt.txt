@@ -1,0 +1,28 @@
+Follow the instructions below to handle missing values in the Housing dataset.
+
+Instructions:
+1. Import the required libraries:
+   - pandas as pd
+   - numpy as np
+   - KNNImputer from sklearn.impute
+
+2. Read the CSV file from '/autograder/source/housing.csv' into a DataFrame.
+
+3. Select only the numeric columns from the DataFrame.
+
+4. Find a numeric column that contains missing values (NaN).
+
+5. For this column with missing values:
+   - Calculate its median value
+   - Use KNNImputer with n_neighbors=10 to impute missing values on the numeric columns only
+   - Get the imputed value at row 291 (0-based indexing)
+
+6. Create and print a list called answer1 containing exactly three elements in this order:
+   - The name of the column with missing values (string)
+   - The median value of that column (float)
+   - The KNN imputed value at row 291 (float)
+
+The final line of your code must be: print(answer1)
+
+Do not include any explanations or comments, only return the Python code.
+Do not include '''python.

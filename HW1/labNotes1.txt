@@ -1,0 +1,26 @@
+gpt-4o-mini
+Heekyung Lee
+Heek + young
+
+1- run prompt through llm and get code (HW1 q1 graded this way)
+2- code and then get the output
+train > 0.9
+valid > 0.8
+
+M - HW released
+T 1-2 5-6
+R 5-6
+
+OH 
+Monday and Wednesday
+
+writing - grok
+
+
+- submit 5 times to make sure it is consistent
+- 4 chances to submit
+
+- prompt should work 99/100 times
+
+
+temp = 0.0
