@@ -1,0 +1,58 @@
+Using the Dry Bean dataset, train a multi-class classifier to predict the "Class" column. Follow these exact requirements so your work is reproducible and compatible with the autograder.
+
+Do not include any explanations or comments, only return the Python code.
+Do not include '''python.
+
+Requirements
+1) Allowed libraries: pandas, numpy, scikit-learn only (no other external libraries).
+2) Dataset path: /autograder/source/drybean.csv
+3) Reproducibility: set random_state=42 wherever randomness is used (data split, model hyperparameters, etc.).
+4) Import warnings and use warnings.filterwarnings('ignore') to suppress convergence warnings.
+
+Data split
+- Split the dataset into training, validation, and test sets using a 60% train, 20% validation, 20% test split.
+- Use train_test_split twice: first split 40% as temp (valid+test), then split temp 50/50 into valid and test.
+- Ensure the split is stratified on the target class to preserve class proportions (use stratify=y).
+
+Preprocessing (must be applied using a single end-to-end pipeline / ColumnTransformer)
+- **IMPORTANT: The dataset has column name typos**: 'AspectRation' (not 'AspectRatio') and 'roundness' (lowercase, not 'Roundness').
+- Standardize (zero mean, unit variance) the following numeric features: 'AspectRation', 'Eccentricity', 'roundness', 'ShapeFactor1', 'ShapeFactor2', 'ShapeFactor3'.
+- Apply a natural log transform to Area using np.log(Area + 1e-6), then standardize the transformed Area using a FunctionTransformer.
+- All preprocessing steps must be fit only on the training data and applied to validation and test via a single scikit-learn Pipeline that contains a ColumnTransformer. This prevents data leakage.
+
+Modeling and selection
+- Explore and compare at least these model families: Decision Tree, K-Nearest Neighbors (KNN), Logistic Regression (multinomial / multi_class='multinomial').
+- Use GridSearchCV with cv=5 for hyperparameter tuning on the training set.
+- Hyperparameter grids to use:
+  * DecisionTree: classifier__max_depth: [None, 5, 10, 15]
+  * KNN: classifier__n_neighbors: [3, 5, 7, 9]
+  * LogisticRegression: classifier__C: [0.1, 1, 10] (with solver='lbfgs', max_iter=1000 to ensure convergence)
+- **CRITICAL**: When using GridSearchCV with a Pipeline, prefix parameter names with 'classifier__' (e.g., 'classifier__max_depth').
+- Select the best model by comparing grid_search.best_score_ across all model families.
+- You may also include other reasonable classifiers if you wish, but keep within scikit-learn.
+
+Evaluation and output
+- Evaluate models using accuracy.
+- After model selection, compute the accuracy on train, validation, and test sets using the final pipeline+model (same preprocessing pipeline applied to each split).
+- Print a Python dictionary with keys exactly: 'train', 'valid', 'test' and their corresponding accuracy values (float). Example:
+
+	{'train': 0.95, 'valid': 0.89, 'test': 0.87}
+
+Implementation details and tips
+- Use a single Pipeline that concatenates a ColumnTransformer (doing the standardization and log+standardize steps) with the classifier. Fit the pipeline on the training set only.
+- When applying log to Area, create a function log_area(X) that copies X, applies np.log(X['Area'] + 1e-6), and returns X. Wrap this in FunctionTransformer(log_area, validate=False).
+- Use sklearn.preprocessing.StandardScaler and sklearn.compose.ColumnTransformer.
+- For reproducibility and grading consistency, ensure any shuffling and randomness use random_state=42.
+- Keep your code self-contained: it should load the CSV from the path above, perform the split, preprocessing, model selection, and print the required dictionary. Do not write or require additional input files.
+- Store model configurations in a dictionary with 'model' and 'params' keys, then iterate through them to find the best model.
+- Track the best model using best_accuracy and best_model variables, updating them when a better grid_search.best_score_ is found.
+
+What will be graded
+- Correct preprocessing applied via a single pipeline (no leakage).
+- Proper train/validation/test split (stratified and reproducible).
+- Reasonable exploration of models/hyperparameters and selection of a final model.
+- Correct output: printed Python dictionary with accuracies for train, valid, and test.
+
+Deliverable expectations
+- A single Python/Jupyter solution that, when run, prints the accuracies dictionary to stdout. Keep the code clear and comment the key steps (split, preprocessing, model selection, final evaluation).
+

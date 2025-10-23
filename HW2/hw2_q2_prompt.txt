@@ -1,0 +1,45 @@
+Using the California Housing dataset, train a regression model to predict median house value.
+
+Dataset path: '/autograder/source/housing.csv'
+
+1. Load the data and split into training (60%), validation (20%), and test (20%) sets
+   - Use train_test_split with test_size=0.2 for train+val vs test
+   - Use train_test_split with test_size=0.25 for train vs validation
+   - Use random_state=42
+
+2. Create a custom transformer class NearestAnchorDistance that:
+   - Inherits from BaseEstimator and TransformerMixin
+   - Stores three anchors: np.array([[37.38, -122.21], [33.99, -118.50], [32.82, -117.31]])
+   - For each row's (latitude, longitude), computes Euclidean distances to all three anchors
+   - Returns the minimum distance as a single feature
+   - IMPORTANT: In the transform method, handle both numpy arrays and DataFrames using:
+     X_array = X if isinstance(X, np.ndarray) else X.values
+
+3. Build separate preprocessing pipelines using ColumnTransformer with remainder='drop':
+   - For ['latitude', 'longitude']: NearestAnchorDistance() → StandardScaler()
+   - For ['total_rooms']: KNNImputer() → FunctionTransformer(np.log1p) → StandardScaler()
+   - For ['housing_median_age', 'median_income']: KNNImputer() → StandardScaler()
+   - For ['ocean_proximity']: OneHotEncoder(handle_unknown='ignore')
+
+4. Create a Pipeline with:
+   - preprocessor (ColumnTransformer from step 3)
+   - regressor: KNeighborsRegressor(n_neighbors=5)
+
+5. Fit the pipeline on X_train, y_train only (to avoid data leakage)
+
+6. Evaluate using Mean Absolute Error (MAE) on all three splits
+
+7. Print a dictionary with keys 'train', 'valid', 'test' and rounded MAE values (2 decimal places)
+
+Required imports:
+- pandas, numpy
+- from sklearn.model_selection import train_test_split
+- from sklearn.pipeline import Pipeline
+- from sklearn.compose import ColumnTransformer
+- from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
+- from sklearn.impute import KNNImputer
+- from sklearn.neighbors import KNeighborsRegressor
+- from sklearn.metrics import mean_absolute_error
+- from sklearn.base import BaseEstimator, TransformerMixin
+
+Do not include any explanations or markdown. Return only executable Python code.
